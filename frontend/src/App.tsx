@@ -1,8 +1,6 @@
 /** 
  * CS-410: Frontend for uploading files, generating spectrograms, and interacting with MongoDB
  * @file app.tsx
- * @authors Jun Cho, Will Cho, Grace Johnson, Connor Whynott
- * @collaborators None
  */
 
 import { useState, useEffect, ChangeEvent } from 'react';
@@ -109,7 +107,8 @@ function App() {
       <header className="app-header"><h1>GC<sup>3</sup></h1></header>
       {statusMessage && <p className="status-banner">{statusMessage}</p>}
       <div className="file-actions">
-        <input type="file" onChange={handleFileChange} className="file-input" />
+        <input type="file" id="file-input" onChange={handleFileChange} className="file-input" />
+        <label htmlFor="file-input" className="custom-file-input">Choose File</label>
         <button onClick={handleUpload} className="btn upload-btn">Upload</button>
         <button onClick={handleSave} className="btn save-btn">Save to Database</button>
         <button onClick={handleClearFiles} className="btn clear-btn">Clear All Saved Files</button>
