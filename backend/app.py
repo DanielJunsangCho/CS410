@@ -19,9 +19,9 @@ from FileData import FileData
 import csv
 import os
 import json
-
 import matplotlib
-# Use the Agg backend for Matplotlib to avoid using any X server
+import subprocess
+
 matplotlib.use('Agg')
 
 """
@@ -308,11 +308,59 @@ def create_app():
 
         
         
+    def generate_data(rows, cols, num_transmitters, transmitter_mean, transmitter_sd, bandwidth, active_time, matrix_filename, transmitters_filename):
+        noise_mean = -109
+        noise_sd = 2
+
+        # Generate the background noise matrix
+        matrix = np.random.normal(loc=noise_mean, scale=noise_sd, size=(rows, cols))
+
+        transmitters = []
+        for _ in range(num_transmitters):
+            start_time = np.random.randint(0, rows - active_time + 1)
+            start_freq = np.random.randint(0, cols - bandwidth + 1)
+            transmitters.append((start_time, start_freq))
+
+            # Inject the transmitter signal
+            for i in range(start_time, start_time + active_time):
+                for j in range(start_freq, start_freq + bandwidth):
+                    signal = np.random.normal(loc=transmitter_mean, scale=transmitter_sd)
+                    matrix[i][j] += signal
+
+        # Save matrix to CSV in current directory
+        np.savetxt(matrix_filename, matrix, delimiter=",")
+
+        # Save transmitter metadata to CSV in current directory
+        with open(transmitters_filename, 'w', newline='') as f:
+            writer = csv.writer(f)
+            writer.writerow(['start_time', 'start_freq'])
+            writer.writerows(transmitters)
+
+        print(f"Saved matrix to {matrix_filename}")
+        print(f"Saved transmitters to {transmitters_filename}")
+
+    @app.route('/generate', methods=['POST'])
+    def generate_data_endpoint():
+        data = request.json
+        rows = data['rows']
+        cols = data['cols']
+        num_transmitters = data['numTransmitters']
+        transmitter_mean = data['mean']
+        transmitter_sd = data['sd']
+        bandwidth = data['bandwidth']
+        active_time = data['activeTime']
+        matrix_filename = data['matrixFilename']
+        transmitters_filename = data['transmittersFilename']
+
+        try:
+            generate_data(rows, cols, num_transmitters, transmitter_mean, transmitter_sd,
+                        bandwidth, active_time, matrix_filename, transmitters_filename)
+            return jsonify({'message': 'Data generated successfully'}), 200
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+        
     @app.route('/file/<file_id>/<plot_type>', methods=['GET'])
     def get_file_plot(file_id, plot_type):
-        """
-        Retrieves a requested plot (spectrogram, time domain, frequency domain, or IQ plot) from GridFS.
-        """
         try:
             if not ObjectId.is_valid(file_id):
                 return jsonify({'error': 'Invalid file ID format'}), 400  
@@ -337,9 +385,7 @@ def create_app():
         except Exception as e:
             return jsonify({'error': str(e)}), 500
 
-
     return app
-
 
 if __name__ == '__main__':
     app = create_app()

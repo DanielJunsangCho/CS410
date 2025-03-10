@@ -5,11 +5,11 @@
  * @collaborators None
  */
 
-import { useState, useRef } from 'react';
 import './App.css';
 import './EnhancedApp.css';
 import DisplayTabs from './components/Tabs';
 import Menu from './components/Menu';
+import Generate from './components/Generate';
 
 function App() {
   return (
@@ -17,6 +17,7 @@ function App() {
       <header className="app-header">
         <Menu />
         <img src="/images/GC3 Logo.png" alt="GC3 Logo" className="app-logo" />
+        <Generate />
       </header>
       <DisplayTabs />
     </main>
