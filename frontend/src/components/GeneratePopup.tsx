@@ -6,8 +6,10 @@ interface GeneratePopupProps {
     rows: number;
     cols: number;
     numTransmitters: number;
-    mean: number;
-    sd: number;
+    transmitterMean: number;
+    transmitterSd: number;
+    noiseMean: number;
+    noiseSd: number;
     bandwidth: number;
     activeTime: number;
     matrixFilename: string;
@@ -19,8 +21,10 @@ const GeneratePopup: React.FC<GeneratePopupProps> = ({ onClose, onGenerate }) =>
   const [rows, setRows] = useState<number>(1000);
   const [cols, setCols] = useState<number>(1024);
   const [numTransmitters, setNumTransmitters] = useState<number>(5);
-  const [mean, setMean] = useState<number>(-75);
-  const [sd, setSd] = useState<number>(2);
+  const [transmitterMean, setTransmitterMean] = useState<number>(-75);
+  const [transmitterSd, setTransmitterSd] = useState<number>(2);
+  const [noiseMean, setNoiseMean] = useState<number>(-109);
+  const [noiseSd, setNoiseSd] = useState<number>(10);
   const [bandwidth, setBandwidth] = useState<number>(200);
   const [activeTime, setActiveTime] = useState<number>(10);
   const [matrixFilename, setMatrixFilename] = useState<string>('output_matrix.csv');
@@ -28,17 +32,19 @@ const GeneratePopup: React.FC<GeneratePopupProps> = ({ onClose, onGenerate }) =>
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const formData = ({
+    const formData = {
       rows,
       cols,
       numTransmitters,
-      mean,
-      sd,
+      transmitterMean,
+      transmitterSd,
+      noiseMean,
+      noiseSd,
       bandwidth,
       activeTime,
       matrixFilename,
       transmittersFilename,
-    });
+    };
     console.log("Form submitted with data:", formData); // Debugging print statement
     onGenerate(formData);
     onClose();
@@ -63,11 +69,19 @@ const GeneratePopup: React.FC<GeneratePopupProps> = ({ onClose, onGenerate }) =>
           </label>
           <label>
             Transmitter Mean:
-            <input type="number" value={mean} onChange={(e) => setMean(Number(e.target.value))} />
+            <input type="number" value={transmitterMean} onChange={(e) => setTransmitterMean(Number(e.target.value))} />
           </label>
           <label>
             Transmitter Standard Deviation:
-            <input type="number" value={sd} onChange={(e) => setSd(Number(e.target.value))} />
+            <input type="number" value={transmitterSd} onChange={(e) => setTransmitterSd(Number(e.target.value))} />
+          </label>
+          <label>
+            Noise Mean:
+            <input type="number" value={noiseMean} onChange={(e) => setNoiseMean(Number(e.target.value))} />
+          </label>
+          <label>
+            Noise Standard Deviation:
+            <input type="number" value={noiseSd} onChange={(e) => setNoiseSd(Number(e.target.value))} />
           </label>
           <label>
             Bandwidth:

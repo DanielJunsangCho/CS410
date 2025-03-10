@@ -17,8 +17,10 @@ const Generate: React.FC = () => {
     rows: number;
     cols: number;
     numTransmitters: number;
-    mean: number;
-    sd: number;
+    transmitterMean: number;
+    transmitterSd: number;
+    noiseMean: number;
+    noiseSd: number;
     bandwidth: number;
     activeTime: number;
     matrixFilename: string;
