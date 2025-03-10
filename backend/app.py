@@ -309,8 +309,8 @@ def create_app():
         
         
     def generate_data(rows, cols, num_transmitters, transmitter_mean, transmitter_sd, bandwidth, active_time, matrix_filename, transmitters_filename):
-        noise_mean = -109
-        noise_sd = 2
+        noise_mean = -109 # can be changed
+        noise_sd = 10      # can be changed
 
         # Generate the background noise matrix
         matrix = np.random.normal(loc=noise_mean, scale=noise_sd, size=(rows, cols))
@@ -339,6 +339,20 @@ def create_app():
         print(f"Saved matrix to {matrix_filename}")
         print(f"Saved transmitters to {transmitters_filename}")
 
+        # Generate and return the plot as base64
+        plt.figure(figsize=(10, 6))
+        plt.imshow(matrix, aspect='auto', cmap='viridis')
+        plt.colorbar(label='Signal Strength')
+        plt.title('Generated Data Matrix')
+        plt.xlabel('Frequency Bin')
+        plt.ylabel('Time Bin')
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png')
+        plt.close()
+        buf.seek(0)
+        plot_data = base64.b64encode(buf.getvalue()).decode('utf-8')
+        return plot_data
+
     @app.route('/generate', methods=['POST'])
     def generate_data_endpoint():
         data = request.json
@@ -353,9 +367,9 @@ def create_app():
         transmitters_filename = data['transmittersFilename']
 
         try:
-            generate_data(rows, cols, num_transmitters, transmitter_mean, transmitter_sd,
-                        bandwidth, active_time, matrix_filename, transmitters_filename)
-            return jsonify({'message': 'Data generated successfully'}), 200
+            plot_data = generate_data(rows, cols, num_transmitters, transmitter_mean, transmitter_sd,
+                                    bandwidth, active_time, matrix_filename, transmitters_filename)
+            return jsonify({'message': 'Data generated successfully', 'plot': plot_data}), 200
         except Exception as e:
             return jsonify({'error': str(e)}), 500
         

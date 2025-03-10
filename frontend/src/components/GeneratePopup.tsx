@@ -20,9 +20,9 @@ const GeneratePopup: React.FC<GeneratePopupProps> = ({ onClose, onGenerate }) =>
   const [cols, setCols] = useState<number>(1024);
   const [numTransmitters, setNumTransmitters] = useState<number>(5);
   const [mean, setMean] = useState<number>(-75);
-  const [sd, setSd] = useState<number>(10);
-  const [bandwidth, setBandwidth] = useState<number>(2);
-  const [activeTime, setActiveTime] = useState<number>(5);
+  const [sd, setSd] = useState<number>(2);
+  const [bandwidth, setBandwidth] = useState<number>(200);
+  const [activeTime, setActiveTime] = useState<number>(10);
   const [matrixFilename, setMatrixFilename] = useState<string>('output_matrix.csv');
   const [transmittersFilename, setTransmittersFilename] = useState<string>('output_transmitters.csv');
 
@@ -62,11 +62,11 @@ const GeneratePopup: React.FC<GeneratePopupProps> = ({ onClose, onGenerate }) =>
             <input type="number" value={numTransmitters} onChange={(e) => setNumTransmitters(Number(e.target.value))} />
           </label>
           <label>
-            Mean:
+            Transmitter Mean:
             <input type="number" value={mean} onChange={(e) => setMean(Number(e.target.value))} />
           </label>
           <label>
-            Standard Deviation:
+            Transmitter Standard Deviation:
             <input type="number" value={sd} onChange={(e) => setSd(Number(e.target.value))} />
           </label>
           <label>

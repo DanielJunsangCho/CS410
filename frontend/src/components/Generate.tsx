@@ -3,6 +3,7 @@ import GeneratePopup from './GeneratePopup';
 
 const Generate: React.FC = () => {
   const [showPopup, setShowPopup] = useState(false);
+  const [plot, setPlot] = useState<string | null>(null);
 
   const handleGenerateClick = () => {
     setShowPopup(true);
@@ -36,6 +37,7 @@ const Generate: React.FC = () => {
       if (response.ok) {
         const result = await response.json();
         console.log(result.message);
+        setPlot(result.plot); // Set plot data to state
         // Handle success (e.g., display a success message or update the UI)
       } else {
         const error = await response.json();
@@ -55,6 +57,11 @@ const Generate: React.FC = () => {
       </button>
       {showPopup && (
         <GeneratePopup onClose={handleClosePopup} onGenerate={handleGenerateData} />
+      )}
+      {plot && (
+        <div>
+          <img src={`data:image/png;base64,${plot}`} alt="Generated Plot" />
+        </div>
       )}
     </>
   );
