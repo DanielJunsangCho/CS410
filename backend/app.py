@@ -179,6 +179,16 @@ def create_app():
         pxx_csv_data.seek(0)
         return fs.put(pxx_csv_data.getvalue().encode(), filename=f"{original_name}_pxx.csv")
 
+    @app.route('/file/<file_id>', methods=['DELETE'])
+    def delete_file():
+        """Deletes single file"""
+
+        for file in fs.find():
+            print(file._id)
+            
+        return jsonify({"num files": len(fs.find())})
+
+
     @app.route('/files', methods=['GET'])
     def get_files():
         """Lists all stored filenames."""
